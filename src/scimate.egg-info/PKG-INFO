@@ -1,0 +1,15 @@
+Metadata-Version: 2.1
+Name: scimate
+Version: 0.0.1
+Summary: Scientific tools
+Author: Riccardo Galafassi
+Author-email: riccardo.galafassi@univ-lyon1.fr
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.7.0
+Description-Content-Type: text/markdown
+Requires-Dist: pandas
+Requires-Dist: numpy
+
+Not implemented
