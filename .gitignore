@@ -1,2 +1,3 @@
 build*
 src/scimate.egg-info/*
+src/scimate/__pycache__/*
