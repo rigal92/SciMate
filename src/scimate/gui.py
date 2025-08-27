@@ -6,15 +6,6 @@ import matplotlib.pyplot as plt
 import plotly.graph_objs as go
 from dash import Dash, dcc, html, Input, Output, callback
 
-# --- Example DataFrame (replace with your real one) ---
-x = np.linspace(400, 800, 200)  # e.g. wavelengths
-spectra = {f"pixel_{i}": np.sin(0.02 * x + i) + np.random.rand(len(x))*0.1 for i in range(100)}
-df = pd.DataFrame({"x": x, **spectra})
-
-# reshape spectra into a square map (here 10x10)
-map_size = int(np.sqrt(len(df.columns)-1))
-map_data = np.array([df[col].sum() for col in df.columns[1:]]).reshape(map_size, map_size)
-
 # --- Dash app ---
 def make_app():
     app = Dash(__name__)
@@ -59,7 +50,7 @@ def show_spectrum(clickData):
     # get clicked pixel index
     i = clickData["points"][0]["x"]
     j = clickData["points"][0]["y"]
-    idx = j * map_size + i  # flatten index
+    idx = j * ny + i  # flatten index
 
     # col = df.columns[idx+1]  # +1 to skip 'x'
     y = spectra.iloc[:,idx]
@@ -75,7 +66,7 @@ def initialize_data(filename, nx, ny):
     y = spectra.columns.get_level_values(1).astype(float)
     xrel = x-x.min()
     yrel = y-y.min()
-    z = spectra.sum().values.reshape(nx,ny)
+    z = spectra.sum().values.reshape(ny,nx)
     z = z/z.max()
     return dict(x=x, y=y, xrel=xrel, yrel=yrel, z=z, df=df)
 
