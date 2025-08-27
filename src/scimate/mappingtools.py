@@ -1,8 +1,8 @@
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 from scipy.stats  import chisquare
-from matplotlib.widgets import Slider
 import matplotlib.pyplot as plt 
 
 
@@ -136,11 +136,6 @@ def contourf_simple(x, y, z, nx, ny, ax = None, fig=None, cbar = True, **kwargs)
 
 	return cp
 
-
-
-
-
-
 def contour_simple(x, y, z, nx, ny, ax = None, fig=None, cbar = True, **kwargs):
 	"""
 	See contourf_simple
@@ -163,8 +158,5 @@ def contour_simple(x, y, z, nx, ny, ax = None, fig=None, cbar = True, **kwargs):
 			fig.tight_layout()
 
 	return cp
-
-
-
 
 
