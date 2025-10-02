@@ -59,8 +59,8 @@ def show_spectrum(clickData):
     fig.update_layout(title=f"Spectrum at pixel ({i},{j})", xaxis_title="x", yaxis_title="Intensity")
     return fig
 
-def initialize_data(filename, nx, ny):
-    df = pd.read_table(filename, header = [13,14])
+def initialize_data(filename, nx, ny, file_format="jasco"):
+    df = mapt.read_map(filename, file_format)
     spectra = df.iloc[:,1:]
     x = spectra.columns.get_level_values(0).astype(float)
     y = spectra.columns.get_level_values(1).astype(float)
