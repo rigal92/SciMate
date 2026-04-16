@@ -4,7 +4,10 @@ import pandas as pd
 import scimate.mappingtools as mapt
 import matplotlib.pyplot as plt
 import plotly.graph_objs as go
+import plotly.io as pio
 from dash import Dash, dcc, html, Input, Output, callback
+
+pio.templates.default = "plotly_white"
 
 # --- Dash app ---
 def make_app():
@@ -71,13 +74,17 @@ def initialize_data(filename, nx, ny, file_format="jasco"):
     return dict(x=x, y=y, xrel=xrel, yrel=yrel, z=z, df=df)
 
 if __name__ == '__main__':
-    if len(sys.argv) < 4:
-        print("Usage: python app.py <spectra_file.csv> <nx> <ny>")
-        sys.exit(1)
+    import argparse
+    parser = argparse.ArgumentParser("")
+    parser.add_argument("filename", help="file containg the spectra")
+    parser.add_argument("nx", help="number of points in x")
+    parser.add_argument("ny", help="number of points in y")
+    parser.add_argument("--mode", default="spectra", help="Choose what to plot alongside with the intensity map. 'spectra' is allowed.")
+    args = parser.parse_args()
 
-    filename = sys.argv[1]
-    nx = int(sys.argv[2])
-    ny = int(sys.argv[3])
+    filename = args.filename
+    nx = int(args.nx)
+    ny = int(args.ny)
     data = initialize_data(filename, nx, ny)
     x_spec = data["df"].iloc[:,0]
     spectra = data["df"].iloc[:,1:]
