@@ -3,8 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 from scipy.stats  import chisquare
-import matplotlib.pyplot as plt 
-
+from sklearn.metrics.pairwise import pairwise_distances_argmin
+from scipy.stats import pearsonr
+from scipy.signal import savgol_filter
 
 def pol0(x,a0):
     return a0
@@ -38,6 +39,59 @@ def read_map(filename, file_format="jasco"):
         df = pd.read_table(filename, header = [i,i+1])
         return df
 
+
+def match_template(data_y, template_data, metric="sqeuclidean", normalize=True, smooth=True, baseline=True):
+    """
+    Finds the spectrum in template_data that is most similar to each one in 
+    data_y. Metric is the method used for the matching.
+
+    Input
+    ------
+    data_y: np.array (n_spectra, spectrum_y)
+        the spectra to be matched
+    template_data: np.array (n_spectra, spectrum_y)
+        the template spectra used for matching
+    metric: str, default="sqeuclidean"
+        the metric used to calculate the distances.
+        Possible values:
+        - from manual implementation:
+            ['pearsonr']
+
+        - from scikit-learn: ['cityblock', 'cosine', 'euclidean', 'l1', 'l2',
+         'manhattan', 'nan_euclidean']
+
+        - from :mod:`scipy.spatial.distance`: ['braycurtis', 'canberra', 'chebyshev',
+          'correlation', 'dice', 'hamming', 'jaccard', 'kulsinski',
+          'mahalanobis', 'minkowski', 'rogerstanimoto', 'russellrao',
+          'seuclidean', 'sokalmichener', 'sokalsneath', 'sqeuclidean',
+          'yule']
+    baseline: bool, default=True
+        remove a costant baseline before computing the distance
+    smooth: bool, default=True
+        smooth data before computing the distance
+    normalize: bool, default=True
+        normalize the data before computing the distance
+    Return
+    ------
+    numpy.array
+        array of closest matches of template_data for each data_y
+    """
+    if baseline:
+        template_data = np.array([s-s.min()for s in template_data])
+        data_y = np.array([s-s.min()for s in data_y])
+    if smooth:
+        win = 50
+        template_data = savgol_filter(template_data, window_length=win, polyorder=2, mode='interp')
+        data_y = savgol_filter(data_y, window_length=win, polyorder=2, mode='interp')
+    if normalize:
+        template_data = np.array([s/s.max()for s in template_data])
+        data_y = np.array([s/s.max()for s in data_y])
+
+    #compute distance
+    if metric == "pearsonr":
+        return np.array([np.argmin([1 - pearsonr(y, ref)[0] for ref in template_data]) for y in data_y]) 
+    else:
+        return pairwise_distances_argmin(data_y, template_data, metric=metric)
 
 
 def chiTest(x,y, background, p0 = None):
